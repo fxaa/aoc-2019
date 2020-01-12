@@ -1,0 +1,52 @@
+name:                aoc
+version:             0.1.0.0
+github:              "fxaa/aoc-haskell"
+license:             MIT
+author:              "fxaa"
+maintainer:          "example@example.com"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/aoc#readme>
+
+dependencies:
+- vector == 0.12.0.3
+- base >= 4.7 && < 5
+- hspec >= 2.7 && < 3
+- split
+
+library:
+  source-dirs: "2019"
+
+executables:
+  aoc-exe:
+    main:                Main.hs
+    source-dirs:         exec
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - aoc
+    - vector
+
+tests:
+  aoc-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - aoc
+    - hspec
