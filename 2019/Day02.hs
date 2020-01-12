@@ -8,10 +8,12 @@ module Day02
     (>>-)
     ) where
 
-import Data.Vector hiding (map) 
+import Data.Vector hiding (filter, head, last, map) 
 import qualified Data.Vector
+import qualified Data.List as L
 
 type ProgramState = (Vector Int, Int)
+-- Describes a list of replacement operations of the form (dst, val), where register dst is given the value val.
 type Operation = [(Int, Int)]
 type OpCode = Int
 
@@ -46,14 +48,31 @@ continue progState
     | progState >>- 2  = continue (progState ->> multiplyStep)
     | otherwise = progState
 
+-- Generate a list of Operation pairs that replace registers 1 and 2.
+-- We'll try running the program with every pair in the generated set.
+ranges :: Int -> [Operation]
+ranges n = [[(1, x), (2, y)] | x <- [0..n], y <- [0..n]]
+
+computationResults :: [Int] -> Int -> [Int]
+computationResults ns limit = map (head . answer02a ns) (ranges limit)
+
+matchesTarget :: Int -> [Int] -> Operation -> Bool
+matchesTarget x program replacements = x == head (answer02a program replacements)
+
 -- Start the computation at register 0.
-compute :: Vector Int -> [(Int, Int)] -> Vector Int
+compute :: Vector Int -> Operation -> Vector Int
 compute prog [] = fst (continue (prog, 0))
 compute prog replacements = fst (continue (prog // replacements, 0))
 
-answer02a :: [Int] -> [(Int, Int)] -> [Int]
+answer02a :: [Int] -> Operation -> [Int]
 answer02a ns [] = toList $ compute ( fromList ns ) []
 answer02a ns replacements = toList $ compute ( fromList ns ) replacements
 
-answer02b :: [Int] -> [Int]
-answer02b = id
+answer02b :: [Int] -> Int -> Int
+answer02b ns 0 = 100 * head (answer02a ns [])
+answer02b ns target = 
+    let x = L.find (matchesTarget target ns) (ranges 100)
+    in case x of 
+        Nothing -> 0 
+        -- This Operation of form x = [(1, a), (2, b)] gave us our solution, so use a and b in the final computation.
+        Just x -> 100 * snd (head x) + snd (last x)

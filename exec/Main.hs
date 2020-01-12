@@ -13,4 +13,5 @@ main = do
     content <- readFile "exec/input/2019/Day02/input.txt"
     let linesOfContent = map read $ splitOn "," content
     print $ show $ answer02a linesOfContent [(1, 12), (2, 2)]
+    print $ show $ answer02b linesOfContent 19690720
 
